@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rahul Prafulla Patil | DevSecOps & Cloud Security Specialist</title>
+    <meta name="description" content="Portfolio of Rahul Prafulla Patil - DevSecOps Engineer, AWS Cloud Architect, Cybersecurity Specialist & Digital Forensics Analyst.">
+    <meta name="keywords" content="Rahul Patil, DevSecOps, AWS, Cybersecurity, Penetration Testing, Digital Forensics, Terraform, Docker, Kubernetes">
+    <meta name="author" content="Rahul Prafulla Patil">
+    
+    <!-- Open Graph / Meta -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://therahulpatil.in/">
+    <meta property="og:title" content="Rahul Prafulla Patil | Cyber Security & DevSecOps">
+    <meta property="og:description" content="Explore Rahul Patil's interactive hacker shell portfolio & DevSecOps/Cloud projects.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;700&family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="theme-matrix CRT-on audio-on">
+
+    <!-- Matrix Digital Rain Canvas -->
+    <canvas id="matrix-canvas"></canvas>
+
+    <!-- CRT Overlay Effects -->
+    <div class="crt-overlay"></div>
+    <div class="vignette"></div>
+
+    <!-- Main Wrapper -->
+    <div id="app-container">
+
+        <!-- Top Navigation / Status Header Bar -->
+        <header class="cyber-header">
+            <div class="header-left">
+                <span class="status-indicator online"></span>
+                <span class="host-title">root@therahulpatil:~#</span>
+                <span class="sec-badge"><i class="fa-solid fa-shield-halved"></i> SEC-LEVEL: 5</span>
+            </div>
+            
+            <div class="header-center">
+            </div>
+
+            <div class="header-right">
+                <!-- Mode Switcher -->
+                <div class="mode-switch-group">
+                    <button id="btn-mode-term" class="cyber-btn active" title="Switch to Terminal CLI"><i class="fa-solid fa-terminal"></i> CLI</button>
+                    <button id="btn-mode-gui" class="cyber-btn" title="Switch to Cyberpunk GUI"><i class="fa-solid fa-display"></i> GUI</button>
+                </div>
+                
+                <!-- Quick Toggles -->
+                <div class="toggles-group">
+                    <button id="toggle-audio" class="icon-btn active" title="Toggle Sound FX"><i class="fa-solid fa-volume-high"></i></button>
+                    <button id="toggle-crt" class="icon-btn active" title="Toggle CRT Scanline Effect"><i class="fa-solid fa-tv"></i></button>
+                    <button id="toggle-theme" class="icon-btn" title="Cycle Hacker Color Theme"><i class="fa-solid fa-palette"></i></button>
+                </div>
+            </div>
+        </header>
+
+        <!-- VIEW 1: INTERACTIVE TERMINAL SHELL MODE (DEFAULT) -->
+        <main id="terminal-view" class="view-panel active">
+            <div class="terminal-window">
+                <div class="terminal-bar">
+                    <div class="window-buttons">
+                        <span class="dot red"></span>
+                        <span class="dot yellow"></span>
+                        <span class="dot green"></span>
+                    </div>
+                    <div class="window-title">bash - 127.0.0.1:22 - ssh root@therahulpatil.in</div>
+                    <div class="window-actions">
+                        <span class="session-clock" id="live-clock">00:00:00 UTC</span>
+                    </div>
+                </div>
+
+                <div class="terminal-body" id="terminal-output">
+                    <!-- Banner loaded dynamically or styled via JS -->
+                    <div class="ascii-banner">
+<pre class="glow-text">
+ _____ _   _ _____      ____    _   _ _   _ _       ____    _  _____ ___ _     
+|_   _| | | | ____| _  |  _ \  / \ | | | | | |  _  |  _ \  / \|_   _|_ _| |    
+  | | | |_| |  _|  (_) | |_) |/ _ \| |_| | | | (_) | |_) |/ _ \ | |  | || |    
+  | | |  _  | |___     |  _ < ___ \  _  | | |___   |  __/ ___ \| |  | || |___ 
+  |_| |_| |_|_____|    |_| \_\_/ \_\_| |_|_|_____| |_| /_/   \_\_| |___|_____|
+</pre>
+                        <div class="banner-subtitle">
+                            [SYSTEM READY] - Welcome to <span class="highlight">Rahul Prafulla Patil</span>'s Cyber Security Terminal.
+                            <br>Type <span class="cmd-highlight">'help'</span> or <span class="cmd-highlight">'ls'</span> to list available security commands & system profiles.
+                        </div>
+                    </div>
+
+                    <!-- Output History Stream -->
+                    <div id="command-history"></div>
+
+                    <!-- Active Prompt Line -->
+                    <div class="prompt-line">
+                        <span class="prompt-user">visitor@therahulpatil</span>:<span class="prompt-path">~</span>$ 
+                        <div class="input-wrapper">
+                            <input type="text" id="terminal-input" autocomplete="off" spellcheck="false" autofocus>
+                            <span class="custom-cursor"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Terminal Quick Command Dock -->
+                <div class="quick-cmd-dock">
+                    <span class="dock-label"><i class="fa-solid fa-bolt"></i> QUICK EXEC:</span>
+                    <button class="dock-btn" data-cmd="whoami">whoami</button>
+                    <button class="dock-btn" data-cmd="skills">skills</button>
+                    <button class="dock-btn" data-cmd="projects">projects</button>
+                    <button class="dock-btn" data-cmd="education">education</button>
+                    <button class="dock-btn" data-cmd="certifications">certs</button>
+                    <button class="dock-btn" data-cmd="contact">contact</button>
+                    <button class="dock-btn" data-cmd="matrix">matrix</button>
+                    <button class="dock-btn" data-cmd="clear">clear</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- VIEW 2: CYBERPUNK GRAPHICAL DASHBOARD MODE -->
+        <main id="gui-view" class="view-panel">
+            <div class="cyber-grid-container">
+
+                <!-- Sidebar / Hero Bio Card -->
+                <aside class="cyber-card profile-card">
+                    <div class="card-header">
+                        <i class="fa-solid fa-user-ninja"></i> AGENT_PROFILE
+                    </div>
+                    <div class="profile-avatar-container">
+                        <div class="hacker-avatar-glitch">
+                            <i class="fa-solid fa-user-shield avatar-icon"></i>
+                        </div>
+                        <span class="badge-status">AWS CERTIFIED</span>
+                    </div>
+
+                    <h2 class="profile-name">RAHUL PRAFULLA PATIL</h2>
+                    <p class="profile-role"><i class="fa-solid fa-code-branch"></i> DevSecOps | AWS Cloud | Cybersecurity</p>
+
+                    <div class="contact-quick-list">
+                        <div class="contact-item">
+                            <i class="fa-solid fa-envelope"></i>
+                            <a href="mailto:patilrahulprafulla@gmail.com">patilrahulprafulla@gmail.com</a>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fa-solid fa-phone"></i>
+                            <a href="tel:+919604622595">+91 9604622595</a>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fa-solid fa-globe"></i>
+                            <span>therahulpatil.in</span>
+                        </div>
+                    </div>
+
+                    <div class="social-links">
+                        <a href="https://github.com/therahulpatil" target="_blank" class="social-btn"><i class="fa-brands fa-github"></i> GitHub</a>
+                        <a href="https://www.linkedin.com/in/patilrahulprafulla" target="_blank" class="social-btn"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
+                    </div>
+
+                    <div class="download-resume-wrap">
+                        <button id="btn-print-resume" class="cyber-action-btn pulse">
+                            <i class="fa-solid fa-file-pdf"></i> GENERATE / PRINT RESUME
+                        </button>
+                    </div>
+                </aside>
+
+                <!-- Main Content Area (Tabs / Sections) -->
+                <section class="main-dashboard">
+
+                    <!-- System Overview / Expertise Summary -->
+                    <div class="cyber-card overview-card">
+                        <div class="card-header">
+                            <i class="fa-solid fa-microchip"></i> CORE_EXPERTISE_SUMMARY
+                        </div>
+                        <div class="expertise-tags-grid">
+                            <span class="exp-tag"><i class="fa-solid fa-network-wired"></i> Network Administration</span>
+                            <span class="exp-tag"><i class="fa-solid fa-server"></i> System Administration</span>
+                            <span class="exp-tag"><i class="fa-brands fa-aws"></i> AWS Cloud Architecture</span>
+                            <span class="exp-tag"><i class="fa-solid fa-infinity"></i> DevSecOps & CI/CD</span>
+                            <span class="exp-tag"><i class="fa-solid fa-shield-virus"></i> Cybersecurity & Hardening</span>
+                            <span class="exp-tag"><i class="fa-solid fa-lock"></i> Network Defence</span>
+                            <span class="exp-tag"><i class="fa-solid fa-clipboard-check"></i> Security Compliance</span>
+                            <span class="exp-tag"><i class="fa-solid fa-magnifying-glass-chart"></i> Digital Forensics</span>
+                        </div>
+                    </div>
+
+                    <!-- Technical Skills Matrix Grid -->
+                    <div class="cyber-card skills-card">
+                        <div class="card-header">
+                            <i class="fa-solid fa-terminal"></i> TECHNICAL_SKILLS_MATRIX
+                        </div>
+                        
+                        <div class="skills-grid">
+                            <!-- Category 1 -->
+                            <div class="skill-group">
+                                <h3><i class="fa-solid fa-shield-cat"></i> Cybersecurity</h3>
+                                <p class="skill-list">OWASP Top 10, Web & Android Security, Vulnerability Assessment, Firewalls, Snort, Suricata, iptables, Fail2Ban, Proxy, OpenVPN</p>
+                            </div>
+
+                            <!-- Category 2 -->
+                            <div class="skill-group">
+                                <h3><i class="fa-brands fa-aws"></i> AWS & Cloud</h3>
+                                <p class="skill-list">EC2, S3, VPC, IAM, ECR, RDS, EBS, EFS, Route 53, Security Groups, NACLs</p>
+                            </div>
+
+                            <!-- Category 3 -->
+                            <div class="skill-group">
+                                <h3><i class="fa-solid fa-cubes"></i> DevOps & IaC</h3>
+                                <p class="skill-list">Jenkins, Docker, Docker Swarm, Kubernetes, Terraform, Ansible, Maven, Git, GitHub</p>
+                            </div>
+
+                            <!-- Category 4 -->
+                            <div class="skill-group">
+                                <h3><i class="fa-solid fa-chart-line"></i> Monitoring & Telemetry</h3>
+                                <p class="skill-list">Prometheus, Grafana, Elasticsearch, Logstash, Kibana (ELK), cAdvisor</p>
+                            </div>
+
+                            <!-- Category 5 -->
+                            <div class="skill-group">
+                                <h3><i class="fa-solid fa-network-wired"></i> Networking</h3>
+                                <p class="skill-list">OSI, TCP/IP, Subnetting, Routing (RIP, OSPF, EIGRP), VLANs, NACLs, Wireshark</p>
+                            </div>
+
+                            <!-- Category 6 -->
+                            <div class="skill-group">
+                                <h3><i class="fa-solid fa-fingerprint"></i> Digital Forensics</h3>
+                                <p class="skill-list">OSForensics, Autopsy, FTK Imager, Magnet AXIOM, Volatility, TestDisk, Memory & Network Forensics</p>
+                            </div>
+
+                            <!-- Category 7 -->
+                            <div class="skill-group">
+                                <h3><i class="fa-solid fa-code"></i> Programming & Scripting</h3>
+                                <p class="skill-list">Python, C, Bash / Shell Scripting</p>
+                            </div>
+
+                            <!-- Category 8 -->
+                            <div class="skill-group">
+                                <h3><i class="fa-solid fa-database"></i> OS & Databases</h3>
+                                <p class="skill-list">Ubuntu, Debian, Rocky Linux, Windows Server, MySQL, Oracle</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Projects Showcase -->
+                    <div class="cyber-card projects-card">
+                        <div class="card-header">
+                            <i class="fa-solid fa-diagram-project"></i> FEATURED_PROJECTS
+                        </div>
+
+                        <div class="projects-list">
+                            <!-- Project 1 -->
+                            <article class="project-box">
+                                <div class="project-header">
+                                    <h3 class="project-title"><i class="fa-solid fa-gears"></i> SecureDevOps: Automated CI/CD & Security Compliance Pipeline</h3>
+                                    <span class="project-tag">DevSecOps / Cloud</span>
+                                </div>
+                                <p class="project-desc">
+                                    Developed an end-to-end DevSecOps platform automating AWS infrastructure provisioning using Terraform, CI/CD pipelines with Jenkins, Static and Dynamic Application Security Testing (SAST/DAST) using SonarQube and OWASP ZAP, container vulnerability assessment using Trivy, Docker-based application deployment, and real-time monitoring with Prometheus and Grafana.
+                                </p>
+                                <div class="tech-stack-pills">
+                                    <span>Terraform</span><span>Jenkins</span><span>SonarQube</span><span>OWASP ZAP</span><span>Trivy</span><span>Docker</span><span>Prometheus</span><span>Grafana</span>
+                                </div>
+                            </article>
+
+                            <!-- Project 2 -->
+                            <article class="project-box">
+                                <div class="project-header">
+                                    <h3 class="project-title"><i class="fa-solid fa-network-wired"></i> Secure AWS VPC Architecture for Web Application Deployment</h3>
+                                    <span class="project-tag">Cloud Infrastructure</span>
+                                </div>
+                                <p class="project-desc">
+                                    Designed and implemented a secure AWS VPC architecture using public and private subnets to optimize performance and security. Configured Bastion Host in public subnet for secure SSH access to private instances, set up NAT Gateway for controlled outbound internet, and enforced strict Security Groups & NACLs rules.
+                                </p>
+                                <div class="tech-stack-pills">
+                                    <span>AWS VPC</span><span>Bastion Host</span><span>NAT Gateway</span><span>NACLs</span><span>Security Groups</span><span>EC2</span>
+                                </div>
+                            </article>
+
+                            <!-- Project 3 -->
+                            <article class="project-box">
+                                <div class="project-header">
+                                    <h3 class="project-title"><i class="fa-solid fa-cloud-arrow-up"></i> Static Web Hosting Using AWS</h3>
+                                    <span class="project-tag">Cloud Hosting</span>
+                                </div>
+                                <p class="project-desc">
+                                    Created and configured S3 buckets to host static websites, including setting up permissions, bucket policies, and access controls. Deployed HTML, CSS, and JavaScript files to S3 buckets, ensuring high availability, security, and sub-second loading performance.
+                                </p>
+                                <div class="tech-stack-pills">
+                                    <span>AWS S3</span><span>CloudFront</span><span>Route 53</span><span>IAM Policies</span><span>Static Web</span>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+
+                    <!-- Education & Certifications -->
+                    <div class="cyber-grid-2col">
+                        <!-- Education -->
+                        <div class="cyber-card edu-card">
+                            <div class="card-header">
+                                <i class="fa-solid fa-graduation-cap"></i> EDUCATION_TIMELINE
+                            </div>
+                            <ul class="timeline">
+                                <li>
+                                    <div class="time-stamp">Aug 2026</div>
+                                    <div class="time-content">
+                                        <h4>PGCP - ITISS (75.14%)</h4>
+                                        <p>Sunbeam Institute of Information Technology</p>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="time-stamp">June 2024</div>
+                                    <div class="time-content">
+                                        <h4>B.Tech - CSE (72.58%)</h4>
+                                        <p>Tatyasaheb Kore Institute of Engineering and Technology</p>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="time-stamp">Feb 2020</div>
+                                    <div class="time-content">
+                                        <h4>Higher Secondary School Certificate (75.08%)</h4>
+                                        <p>Yashwantrao Chavan Warana Mahavidhyalaya</p>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="time-stamp">March 2018</div>
+                                    <div class="time-content">
+                                        <h4>Secondary School Certificate (85.60%)</h4>
+                                        <p>Shree Warana Vidhyalaya</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Certifications & Additional Info -->
+                        <div class="cyber-card cert-card">
+                            <div class="card-header">
+                                <i class="fa-solid fa-certificate"></i> CERTIFICATIONS_&_DETAILS
+                            </div>
+                            
+                            <div class="cert-item">
+                                <div class="cert-icon"><i class="fa-brands fa-aws"></i></div>
+                                <div class="cert-info">
+                                    <h4>AWS Certified Cloud Practitioner</h4>
+                                    <a href="https://cp.certmetrics.com/amazon/en/public/verify/credential/c49b3418666a41818f74795c50633cff" target="_blank" class="cert-verify-link">
+                                        <i class="fa-solid fa-square-arrow-up-right"></i> Verify Credential
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="meta-section">
+                                <h4><i class="fa-solid fa-language"></i> Languages</h4>
+                                <p>English, Hindi, Marathi</p>
+                            </div>
+
+                            <div class="meta-section">
+                                <h4><i class="fa-solid fa-medal"></i> Activities</h4>
+                                <p>NCC Cadet (C Certificate Holder)</p>
+                            </div>
+
+                            <div class="meta-section">
+                                <h4><i class="fa-solid fa-person-hiking"></i> Hobbies</h4>
+                                <p>Body Building, Trekking</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="cyber-footer" style="display:none;">
+        </footer>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="js/audio.js"></script>
+    <script src="js/matrix.js"></script>
+    <script src="js/terminal.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
