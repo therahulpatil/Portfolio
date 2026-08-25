@@ -436,11 +436,12 @@ Verification  : <a href="https://cp.certmetrics.com/amazon/en/public/verify/cred
         return `
 CONTACT DIRECTORY:
 --------------------------------------------------------------------------------
-Phone    : <span class="highlight">+91 9604622595</span>
-Email    : <a href="mailto:patilrahulprafulla@gmail.com" style="color:var(--main-color)">patilrahulprafulla@gmail.com</a>
-GitHub   : <a href="https://github.com/therahulpatil" target="_blank" style="color:var(--accent-cyan)">https://github.com/therahulpatil</a>
-LinkedIn : <a href="https://www.linkedin.com/in/patilrahulprafulla" target="_blank" style="color:var(--accent-cyan)">https://github.com/therahulpatil</a>
-Domain   : <a href="https://therahulpatil.in" target="_blank" style="color:var(--highlight)">https://therahulpatil.in</a>
+Phone     : <span class="highlight">+91 9604622595</span>
+Email     : <a href="mailto:patilrahulprafulla@gmail.com" style="color:var(--main-color)">patilrahulprafulla@gmail.com</a>
+GitHub    : <a href="https://github.com/therahulpatil" target="_blank" style="color:var(--accent-cyan)">https://github.com/therahulpatil</a>
+LinkedIn  : <a href="https://www.linkedin.com/in/patilrahulprafulla" target="_blank" style="color:var(--accent-cyan)">https://www.linkedin.com/in/patilrahulprafulla</a>
+Instagram : <a href="https://www.instagram.com/the.rahul.patil" target="_blank" style="color:var(--accent-cyan)">https://www.instagram.com/the.rahul.patil</a>
+Domain    : <a href="https://therahulpatil.in" target="_blank" style="color:var(--highlight)">https://therahulpatil.in</a>
 --------------------------------------------------------------------------------`;
     }
 
