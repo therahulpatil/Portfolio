@@ -457,9 +457,18 @@ body:not(.CRT-on) .crt-overlay {
     box-shadow: 0 0 20px var(--main-glow);
 }
 
-.avatar-icon {
-    font-size: 3.5rem;
-    color: var(--main-color);
+.profile-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    filter: contrast(1.1) brightness(0.95);
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.hacker-avatar-glitch:hover .profile-img {
+    transform: scale(1.05);
+    filter: contrast(1.2) brightness(1.1);
 }
 
 .badge-status {

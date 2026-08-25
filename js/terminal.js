@@ -11,6 +11,16 @@ class CyberTerminal {
 
         this.commandHistory = [];
         this.historyIndex = -1;
+        this.currentUser = 'toor';
+        this.savedVisitorName = 'toor';
+        this.awaitingVisitorName = false;
+        this.awaitingRootPassword = false;
+        this.rootPassword = '0xDEAD_R00T!';
+
+        // Fail2Ban tracking
+        this.failedAttempts = 0;
+        this.maxAttempts = 3;
+        this.isBanned = false;
 
         // Command definitions & aliases
         this.commands = {
@@ -31,7 +41,15 @@ class CyberTerminal {
             'gui': () => this.cmdGui(),
             'clear': () => this.cmdClear(),
             'cls': () => this.cmdClear(),
+            'exit': () => this.cmdExit(),
+            'logout': () => this.cmdExit(),
+            'su': () => this.cmdSu(),
+            'su root': () => this.cmdSu(),
             'sudo': () => this.cmdSudo(),
+            'sudo su': () => this.cmdSudo(),
+            'fail2ban': () => this.cmdFail2ban(),
+            'fail2ban-client': () => this.cmdFail2ban(),
+            'unban': () => this.cmdUnban(),
             'nmap': () => this.cmdNmap(),
             'top': () => this.cmdTop(),
             'cat flag.txt': () => this.cmdFlag(),
@@ -43,6 +61,12 @@ class CyberTerminal {
 
     init() {
         if (!this.input) return;
+
+        // Set prompt user to toor@therahulpatil:~$
+        this.setPromptUser(this.currentUser);
+
+        // Start boot login sequence
+        this.startBootSequence();
 
         // Focus input on click anywhere in terminal
         this.terminalOutput.addEventListener('click', () => this.input.focus());
@@ -77,10 +101,156 @@ class CyberTerminal {
         });
     }
 
-    executeCommand(rawCmd) {
-        if (rawCmd === '') return;
+    setPromptUser(username) {
+        const promptLabel = document.getElementById('prompt-label');
+        if (!promptLabel) return;
 
-        // Clear previous command output to keep screen clean and easy to read
+        if (this.awaitingRootPassword) {
+            promptLabel.innerHTML = '<span class="cmd-highlight">Password: </span>';
+        } else {
+            const isRoot = username === 'root';
+            const symbol = isRoot ? '#' : '$';
+            promptLabel.innerHTML = `<span class="prompt-user">${this.escapeHTML(username)}@therahulpatil</span>:<span class="prompt-path">~</span>${symbol} `;
+        }
+    }
+
+    startBootSequence() {
+        const bootStream = document.getElementById('boot-log-stream');
+        if (!bootStream) return;
+
+        bootStream.innerHTML = '';
+
+        const bootLogs = [
+            { text: "<span class='cmd-highlight'>[BOOT SYSTEM] Connecting to SSH Server therahulpatil.in:22...</span>", delay: 150 },
+            { text: "therahulpatil login: <span class='highlight'>root</span>", delay: 450 },
+            { text: "Password: ••••••••••••••••", delay: 800 },
+            { text: "<span class='highlight'>[OK] Access Granted! Authenticated as root@therahulpatil</span>", delay: 1150 },
+            { text: "<span class='error-msg'>[SECURITY POLICY] Demoting root privileges for guest visitor mode...</span>", delay: 1500 },
+            { text: "<span class='highlight'>[SYSTEM READY] - Welcome to therahulpatil's Cyber Security Terminal.</span>", delay: 1850 },
+            { text: "Type <span class='cmd-highlight'>'help'</span> or <span class='cmd-highlight'>'ls'</span> to list available security commands & system profiles.", delay: 2150 },
+            { text: "<span class='highlight'>Logged in as toor@therahulpatil:~$</span>", delay: 2450 }
+        ];
+
+        bootLogs.forEach(log => {
+            setTimeout(() => {
+                const line = document.createElement('div');
+                line.className = 'boot-log-line';
+                line.style.margin = '4px 0';
+                line.innerHTML = log.text;
+                bootStream.appendChild(line);
+                if (window.cyberAudio) window.cyberAudio.playKeyClick();
+                this.terminalOutput.scrollTop = this.terminalOutput.scrollHeight;
+            }, log.delay);
+        });
+    }
+
+    executeCommand(rawCmd) {
+        if (rawCmd === '' && !this.awaitingRootPassword) return;
+
+        // Fail2Ban Lockout check
+        if (this.isBanned && rawCmd.toLowerCase().trim() !== 'unban' && rawCmd.toLowerCase().trim() !== 'fail2ban-client unban') {
+            this.historyContainer.innerHTML = `
+                <div class="terminal-cmd-entry">
+                    <div class="cmd-response">
+                        <span class="error-msg">[FAIL2BAN ACCESS BLOCKED] IP 127.0.0.1 (user '${this.escapeHTML(this.currentUser)}') is JAILED!</span>
+                        <br>Type <span class="cmd-highlight">'unban'</span> to release the Fail2Ban iptables DROP rule.
+                    </div>
+                </div>
+            `;
+            if (window.cyberAudio) window.cyberAudio.playErrorBeep();
+            return;
+        }
+
+        // Check if terminal is awaiting root password input
+        if (this.awaitingRootPassword) {
+            const isValidPass = (rawCmd === this.rootPassword || rawCmd === 'FLAG{0xDEAD_R00T!}');
+            
+            if (isValidPass) {
+                this.awaitingRootPassword = false;
+                this.failedAttempts = 0;
+                this.input.type = 'text';
+                this.currentUser = 'root';
+                this.setPromptUser('root');
+                this.historyContainer.innerHTML = `
+                    <div class="terminal-cmd-entry">
+                        <div class="cmd-response">
+                            <span class="cmd-highlight">[ROOT UNLOCKED] Authentication successful! Switched session to root@therahulpatil.</span>
+                        </div>
+                    </div>
+                `;
+                if (window.cyberAudio) window.cyberAudio.playSuccessChime();
+            } else {
+                this.failedAttempts++;
+                const attemptsLeft = this.maxAttempts - this.failedAttempts;
+
+                if (attemptsLeft > 0) {
+                    // Prompt for next retry attempt
+                    this.awaitingRootPassword = true;
+                    this.input.type = 'password';
+                    this.setPromptUser('password');
+                    this.historyContainer.innerHTML = `
+                        <div class="terminal-cmd-entry">
+                            <div class="cmd-response">
+                                <span class="error-msg">su: Authentication failure (${attemptsLeft} attempt${attemptsLeft === 1 ? '' : 's'} remaining)</span>
+                            </div>
+                        </div>
+                    `;
+                    if (window.cyberAudio) window.cyberAudio.playErrorBeep();
+                } else {
+                    // Trigger Fail2Ban Jail!
+                    this.awaitingRootPassword = false;
+                    this.isBanned = true;
+                    this.input.type = 'text';
+                    this.setPromptUser(this.currentUser);
+                    this.historyContainer.innerHTML = `
+                        <div class="terminal-cmd-entry">
+                            <div class="cmd-response">
+                                <span class="error-msg">[FAIL2BAN TRIGGERED] 3 Failed authentication attempts for user '${this.escapeHTML(this.currentUser)}'.</span>
+                                <br><span class="accent-red">IP: 127.0.0.1 [JAIL: sshd-jail] -> STATUS: BANNED!</span>
+                                <br>
+                                <pre class="glow-text" style="margin-top:8px;">
+================================================================================
+[FAIL2BAN JAIL AUDIT LOG - /var/log/fail2ban.log]
+Status for jail: sshd-jail
+|- Filter: sshd (Failed logons threshold reached: 3/3)
+|- Actions: iptables -I INPUT -s 127.0.0.1 -j DROP
+\`- Currently Banned: 1 IP (127.0.0.1)
+
+* Type 'unban' to release IP 127.0.0.1 from the Fail2Ban jail!
+================================================================================
+</pre>
+                            </div>
+                        </div>
+                    `;
+                    if (window.cyberAudio) window.cyberAudio.playErrorBeep();
+                }
+            }
+            return;
+        }
+
+        // Check for 'name <username>' or 'user <username>' or 'login <username>'
+        const lowerRaw = rawCmd.toLowerCase().trim();
+        if (lowerRaw.startsWith('name ') || lowerRaw.startsWith('user ') || lowerRaw.startsWith('login ')) {
+            const newName = lowerRaw.split(' ')[1]?.trim().replace(/[^a-z0-9_]/g, '');
+            if (newName) {
+                this.currentUser = newName;
+                this.savedVisitorName = newName;
+                this.setPromptUser(this.currentUser);
+                this.historyContainer.innerHTML = `
+                    <div class="terminal-cmd-entry">
+                        <div class="cmd-response">
+                            <span class="highlight">Username updated to ${this.escapeHTML(this.currentUser)}@therahulpatil</span>
+                        </div>
+                    </div>
+                `;
+                if (window.cyberAudio) window.cyberAudio.playSuccessChime();
+                return;
+            }
+        }
+
+        // Clear initial boot log stream & previous output to keep screen clean
+        const bootStream = document.getElementById('boot-log-stream');
+        if (bootStream) bootStream.innerHTML = '';
         this.historyContainer.innerHTML = '';
 
         // Push to history
@@ -92,7 +262,7 @@ class CyberTerminal {
         entry.className = 'terminal-cmd-entry';
         entry.innerHTML = `
             <div class="cmd-line">
-                <span class="prompt-user">visitor@therahulpatil</span>:<span class="prompt-path">~</span>$ <span class="cmd-executed">${this.escapeHTML(rawCmd)}</span>
+                <span class="prompt-user">${this.escapeHTML(this.currentUser)}@therahulpatil</span>:<span class="prompt-path">~</span>${this.currentUser === 'root' ? '#' : '$'} <span class="cmd-executed">${this.escapeHTML(rawCmd)}</span>
             </div>
             <div class="cmd-response"></div>
         `;
@@ -161,11 +331,15 @@ AVAILABLE SYSTEM COMMANDS:
  <span class="cmd-highlight">contact</span>       : Print Contact Info, Phone, Email, Social Links
  <span class="cmd-highlight">forensics</span>     : Display Digital Forensics & Investigation Toolsets
  <span class="cmd-highlight">devsecops</span>     : Inspect Automated CI/CD & Security Compliance Pipeline
+ <span class="cmd-highlight">su / sudo</span>     : Request Root Privilege Escalation (3 Password Attempts)
+ <span class="cmd-highlight">fail2ban</span>      : View Fail2Ban Jail Audit & Security Status
+ <span class="cmd-highlight">unban</span>         : Unban IP 127.0.0.1 & Reset Failed Authentication Jail
+ <span class="cmd-highlight">exit / logout</span> : Exit root session or restart terminal login
  <span class="cmd-highlight">matrix</span>        : Toggle Matrix Digital Rain Background On/Off
  <span class="cmd-highlight">theme</span>         : Cycle Theme Palette (Matrix Green / Cyber Cyan / Amber / Red)
  <span class="cmd-highlight">gui</span>           : Switch to Interactive Cyberpunk Dashboard GUI Mode
  <span class="cmd-highlight">clear</span>         : Clear Terminal Output Buffer
- <span class="cmd-highlight">nmap</span>, <span class="cmd-highlight">top</span>, <span class="cmd-highlight">flag</span>: Security Easter Eggs & Network Tools
+ <span class="cmd-highlight">nmap</span>, <span class="cmd-highlight">top</span>, <span class="cmd-highlight">flag</span>: Security Easter Eggs & CTF Flag
 --------------------------------------------------------------------------------`;
     }
 
@@ -182,45 +356,40 @@ drwxr-xr-x 2 root root  4096 Aug 2026 <span class="cmd-highlight">digital_forens
 
     cmdWhoami() {
         return `
-[IDENTITY CHECK]
---------------------------------------------------------------------------------
-NAME      : <span class="highlight">RAHUL PRAFULLA PATIL</span>
-ROLE      : DevSecOps Engineer | AWS Cloud Specialist | System & Network Administrator
-CERTIFIED : <span class="cmd-highlight">AWS Certified Cloud Practitioner</span>
-EXPERTISE : Network Admin, SysAdmin, AWS Cloud, DevSecOps, Network Defence, Forensics
-DOMAIN    : <span class="highlight">therahulpatil.in</span>
-LOCATION  : Maharashtra, India
---------------------------------------------------------------------------------`;
+NAME        : <span class="highlight">RAHUL PRAFULLA PATIL</span>
+ROLE        : DevSecOps Engineer | AWS Cloud Specialist | System & Network Administrator
+CERTIFICATE : <span class="cmd-highlight">AWS Certified Cloud Practitioner</span>
+EXPERTISE   : Network Admin, SysAdmin, AWS Cloud, DevSecOps, Network Defence, Compliance & Forensics`;
     }
 
     cmdSkills() {
         return `
 TECHNICAL SKILLS MATRIX:
 ================================================================================
-<span class="cmd-highlight">[+] CYBERSECURITY & DEFENCE:</span>
-    OWASP Top 10, Web & Android Security, Vulnerability Assessment,
-    Firewalls, Snort, Suricata, iptables, Fail2Ban, Proxy, OpenVPN
-
 <span class="cmd-highlight">[+] AWS & CLOUD INFRASTRUCTURE:</span>
     EC2, S3, VPC, IAM, ECR, RDS, EBS, EFS, Route 53, Security Groups, NACLs
-
-<span class="cmd-highlight">[+] DEVSECOPS & IaC:</span>
-    Jenkins, Docker, Docker Swarm, Kubernetes, Terraform, Ansible, Maven, Git, GitHub
-
-<span class="cmd-highlight">[+] MONITORING & TELEMETRY:</span>
-    Prometheus, Grafana, Elasticsearch, Logstash, Kibana (ELK), cAdvisor
 
 <span class="cmd-highlight">[+] NETWORKING & PROTOCOLS:</span>
     OSI Model, TCP/IP, Subnetting, Routing (RIP, OSPF, EIGRP), VLANs, NACLs, Wireshark
 
+<span class="cmd-highlight">[+] DEVSECOPS & IaC:</span>
+    Jenkins, Docker, Docker Swarm, Kubernetes, Terraform, Ansible, Maven, Git, GitHub
+
+<span class="cmd-highlight">[+] CYBERSECURITY & DEFENCE:</span>
+    OWASP Top 10, Web & Android Security, Vulnerability Assessment,
+    Firewalls, Snort, Suricata, iptables, Fail2Ban, Proxy, OpenVPN
+
+<span class="cmd-highlight">[+] MONITORING & TELEMETRY:</span>
+    Prometheus, Grafana, Elasticsearch, Logstash, Kibana (ELK), cAdvisor
+
 <span class="cmd-highlight">[+] DIGITAL FORENSICS:</span>
     OSForensics, Autopsy, FTK Imager, Magnet AXIOM, Volatility, TestDisk, Memory/Net Forensics
 
-<span class="cmd-highlight">[+] PROGRAMMING & SCRIPTING:</span>
-    Python, C, Bash / Shell Scripting
-
 <span class="cmd-highlight">[+] OS & DATABASES:</span>
     Ubuntu, Debian, Rocky Linux, Windows Server, MySQL, Oracle
+
+<span class="cmd-highlight">[+] PROGRAMMING & SCRIPTING:</span>
+    Python, C, Bash / Shell Scripting
 ================================================================================`;
     }
 
@@ -247,13 +416,11 @@ FEATURED ENGINEERING PROJECTS:
 
     cmdEducation() {
         return `
-ACADEMIC QUALIFICATIONS:
---------------------------------------------------------------------------------
-[2026] <span class="highlight">PGCP - ITISS</span> | Sunbeam Institute of Info Tech          - <span class="cmd-highlight">75.14%</span>
-[2024] <span class="highlight">B.Tech - CSE</span> | Tatyasaheb Kore Institute of Engg & Tech - <span class="cmd-highlight">72.58%</span>
-[2020] <span class="highlight">HSC (Class XII)</span> | Yashwantrao Chavan Warana Mahavidhyalaya - <span class="cmd-highlight">75.08%</span>
-[2018] <span class="highlight">SSC (Class X)</span> | Shree Warana Vidhyalaya                  - <span class="cmd-highlight">85.60%</span>
---------------------------------------------------------------------------------`;
+ACADEMIC QUALIFICATIONS (ls -l /var/log/education/):
+-rw-r--r-- 1 PGCP-ITISS   <span class="cmd-highlight">75.14%</span> Aug 2026 <span class="highlight">Sunbeam_Institute_of_Info_Tech.edu</span>
+-rw-r--r-- 1 B.Tech-CSE   <span class="cmd-highlight">72.58%</span> Jun 2024 <span class="highlight">Tatyasaheb_Kore_Inst_of_Engg_&_Tech.edu</span>
+-rw-r--r-- 1 HSC-Class12  <span class="cmd-highlight">75.08%</span> Feb 2020 <span class="highlight">Yashwantrao_Chavan_Warana_Mahavidhyalaya.edu</span>
+-rw-r--r-- 1 SSC-Class10  <span class="cmd-highlight">85.60%</span> Mar 2018 <span class="highlight">Shree_Warana_Vidhyalaya.edu</span>`;
     }
 
     cmdCertifications() {
@@ -272,7 +439,7 @@ CONTACT DIRECTORY:
 Phone    : <span class="highlight">+91 9604622595</span>
 Email    : <a href="mailto:patilrahulprafulla@gmail.com" style="color:var(--main-color)">patilrahulprafulla@gmail.com</a>
 GitHub   : <a href="https://github.com/therahulpatil" target="_blank" style="color:var(--accent-cyan)">https://github.com/therahulpatil</a>
-LinkedIn : <a href="https://www.linkedin.com/in/patilrahulprafulla" target="_blank" style="color:var(--accent-cyan)">https://www.linkedin.com/in/patilrahulprafulla</a>
+LinkedIn : <a href="https://www.linkedin.com/in/patilrahulprafulla" target="_blank" style="color:var(--accent-cyan)">https://github.com/therahulpatil</a>
 Domain   : <a href="https://therahulpatil.in" target="_blank" style="color:var(--highlight)">https://therahulpatil.in</a>
 --------------------------------------------------------------------------------`;
     }
@@ -312,6 +479,62 @@ Monitoring      : Prometheus, Grafana, ELK Stack (Elasticsearch, Logstash, Kiban
 --------------------------------------------------------------------------------`;
     }
 
+    cmdSu() {
+        if (this.currentUser === 'root') {
+            return `Already logged in as root@therahulpatil.in`;
+        }
+        if (this.isBanned) {
+            return `<span class="error-msg">[FAIL2BAN ACCESS BLOCKED] IP 127.0.0.1 is jailed! Type 'unban' to release.</span>`;
+        }
+        this.awaitingRootPassword = true;
+        this.setPromptUser(this.currentUser);
+        this.input.type = 'password';
+        return `[sudo] password for ${this.escapeHTML(this.currentUser)}: `;
+    }
+
+    cmdSudo() {
+        return this.cmdSu();
+    }
+
+    cmdFail2ban() {
+        return `
+Status for Fail2Ban Service:
+================================================================================
+Number of Jail(s): 1
+Jail list        : sshd-jail
+Jail status      : <span class="${this.isBanned ? 'error-msg' : 'highlight'}">${this.isBanned ? 'ACTIVE (1 BANNED IP)' : 'IDLE (0 BANNED IPs)'}</span>
+Failed Attempts  : ${this.failedAttempts} / ${this.maxAttempts}
+Banned IP        : ${this.isBanned ? '127.0.0.1 (localhost)' : 'None'}
+================================================================================`;
+    }
+
+    cmdUnban() {
+        this.isBanned = false;
+        this.failedAttempts = 0;
+        this.awaitingRootPassword = false;
+        this.input.type = 'text';
+        this.setPromptUser(this.currentUser);
+        return `<span class="cmd-highlight">[FAIL2BAN UNBAN] IP 127.0.0.1 released from sshd-jail. Failed authentication counter reset to 0.</span>`;
+    }
+
+    cmdExit() {
+        if (this.currentUser === 'root') {
+            this.currentUser = this.savedVisitorName || 'toor';
+            this.setPromptUser(this.currentUser);
+            return `<span class="cmd-highlight">logout</span><br>Dropped root privileges. Returned to session: <span class="highlight">${this.escapeHTML(this.currentUser)}@therahulpatil</span>`;
+        }
+
+        // Restart terminal session
+        this.currentUser = 'toor';
+        this.failedAttempts = 0;
+        this.isBanned = false;
+        this.awaitingRootPassword = false;
+        this.input.type = 'text';
+        this.setPromptUser('toor');
+        this.startBootSequence();
+        return `<span class="error-msg">[SESSION TERMINATED] Connection to therahulpatil.in closed. Restarting terminal login...</span>`;
+    }
+
     cmdMatrix() {
         if (window.matrixEffect) {
             const running = window.matrixEffect.togglePause();
@@ -341,13 +564,9 @@ Monitoring      : Prometheus, Grafana, ELK Stack (Elasticsearch, Logstash, Kiban
         return null;
     }
 
-    cmdSudo() {
-        return `<span class="error-msg">[ACCESS DENIED] root privilege escalation blocked. User visitor is logged in audit trail!</span>`;
-    }
-
     cmdNmap() {
         return `
-Starting Nmap 7.94 ( https://nmap.org ) at 2026-08-25 12:35 UTC
+Starting Nmap 7.94 ( https://nmap.org ) at 2026-08-25 16:15 IST
 Nmap scan report for therahulpatil.in (127.0.0.1)
 Host is up (0.00015s latency).
 Not shown: 997 closed tcp ports
@@ -361,7 +580,7 @@ Nmap done: 1 IP address (1 host up) scanned in 0.42 seconds.`;
 
     cmdTop() {
         return `
-top - 12:35:05 up 42 days,  3:14,  1 user,  load average: 0.08, 0.03, 0.01
+top - 16:15:08 IST up 42 days,  3:14,  1 user,  load average: 0.08, 0.03, 0.01
 Tasks: 142 total,   1 running, 141 sleeping,   0 stopped,   0 zombie
 %Cpu(s):  2.1 us,  0.5 sy,  0.0 ni, 97.4 id,  0.0 wa,  0.0 hi,  0.0 si
 MiB Mem :   7892.4 total,   3412.1 free,   2104.5 used,   2375.8 buff/cache
@@ -374,7 +593,7 @@ MiB Mem :   7892.4 total,   3412.1 free,   2104.5 used,   2375.8 buff/cache
     }
 
     cmdFlag() {
-        return `<span class="cmd-highlight">FLAG{r4hul_p4t1l_d3vs3c0ps_m4st3r_2026}</span>`;
+        return `<span class="cmd-highlight">FLAG{0xDEAD_R00T!}</span>`;
     }
 }
 

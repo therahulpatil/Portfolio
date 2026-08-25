@@ -5,7 +5,7 @@
 
 class CyberApp {
     constructor() {
-        this.themes = ['theme-matrix', 'theme-cyber', 'theme-amber', 'theme-red'];
+        this.themes = ['theme-red', 'theme-matrix', 'theme-cyber', 'theme-amber'];
         this.currentThemeIndex = 0;
 
         this.init();
@@ -96,11 +96,15 @@ class CyberApp {
         if (!clockEl) return;
 
         const now = new Date();
-        const hrs = String(now.getUTCHours()).padStart(2, '0');
-        const mins = String(now.getUTCMinutes()).padStart(2, '0');
-        const secs = String(now.getUTCSeconds()).padStart(2, '0');
-
-        clockEl.textContent = `${hrs}:${mins}:${secs} UTC`;
+        const options = {
+            timeZone: 'Asia/Kolkata',
+            hour12: false,
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        };
+        const istTime = new Intl.DateTimeFormat('en-IN', options).format(now);
+        clockEl.textContent = `${istTime} IST`;
     }
 }
 

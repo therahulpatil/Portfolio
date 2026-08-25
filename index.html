@@ -25,7 +25,7 @@
     <!-- Main Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="theme-matrix CRT-on audio-on">
+<body class="theme-red CRT-on audio-on">
 
     <!-- Matrix Digital Rain Canvas -->
     <canvas id="matrix-canvas"></canvas>
@@ -82,14 +82,8 @@
                 <div class="terminal-body" id="terminal-output">
                     <!-- Banner loaded dynamically or styled via JS -->
                     <div class="ascii-banner">
-<pre class="glow-text">
- _____ _   _ _____      ____    _   _ _   _ _       ____    _  _____ ___ _     
-|_   _| | | | ____| _  |  _ \  / \ | | | | | |  _  |  _ \  / \|_   _|_ _| |    
-  | | | |_| |  _|  (_) | |_) |/ _ \| |_| | | | (_) | |_) |/ _ \ | |  | || |    
-  | | |  _  | |___     |  _ < ___ \  _  | | |___   |  __/ ___ \| |  | || |___ 
-  |_| |_| |_|_____|    |_| \_\_/ \_\_| |_|_|_____| |_| /_/   \_\_| |___|_____|
-</pre>
-                        <div class="banner-subtitle">
+                        <div id="boot-log-stream" class="boot-stream-container"></div>
+                        <div class="banner-subtitle" id="banner-sub-text" style="opacity: 0; transition: opacity 0.5s ease;">
                             [SYSTEM READY] - Welcome to <span class="highlight">Rahul Prafulla Patil</span>'s Cyber Security Terminal.
                             <br>Type <span class="cmd-highlight">'help'</span> or <span class="cmd-highlight">'ls'</span> to list available security commands & system profiles.
                         </div>
@@ -100,7 +94,7 @@
 
                     <!-- Active Prompt Line -->
                     <div class="prompt-line">
-                        <span class="prompt-user">visitor@therahulpatil</span>:<span class="prompt-path">~</span>$ 
+                        <span id="prompt-label" class="prompt-label"><span class="prompt-user">toor@therahulpatil</span>:<span class="prompt-path">~</span>$ </span>
                         <div class="input-wrapper">
                             <input type="text" id="terminal-input" autocomplete="off" spellcheck="false" autofocus>
                             <span class="custom-cursor"></span>
@@ -130,11 +124,11 @@
                 <!-- Sidebar / Hero Bio Card -->
                 <aside class="cyber-card profile-card">
                     <div class="card-header">
-                        <i class="fa-solid fa-user-ninja"></i> AGENT_PROFILE
+                        <i class="fa-solid fa-user-shield"></i> ROOT_USER_PROFILE
                     </div>
                     <div class="profile-avatar-container">
                         <div class="hacker-avatar-glitch">
-                            <i class="fa-solid fa-user-shield avatar-icon"></i>
+                            <img src="assets/profile.jpg" alt="Rahul Prafulla Patil" class="profile-img">
                         </div>
                         <span class="badge-status">AWS CERTIFIED</span>
                     </div>
@@ -196,52 +190,52 @@
                         </div>
                         
                         <div class="skills-grid">
-                            <!-- Category 1 -->
-                            <div class="skill-group">
-                                <h3><i class="fa-solid fa-shield-cat"></i> Cybersecurity</h3>
-                                <p class="skill-list">OWASP Top 10, Web & Android Security, Vulnerability Assessment, Firewalls, Snort, Suricata, iptables, Fail2Ban, Proxy, OpenVPN</p>
-                            </div>
-
-                            <!-- Category 2 -->
+                            <!-- Category 1: AWS -->
                             <div class="skill-group">
                                 <h3><i class="fa-brands fa-aws"></i> AWS & Cloud</h3>
                                 <p class="skill-list">EC2, S3, VPC, IAM, ECR, RDS, EBS, EFS, Route 53, Security Groups, NACLs</p>
                             </div>
 
-                            <!-- Category 3 -->
-                            <div class="skill-group">
-                                <h3><i class="fa-solid fa-cubes"></i> DevOps & IaC</h3>
-                                <p class="skill-list">Jenkins, Docker, Docker Swarm, Kubernetes, Terraform, Ansible, Maven, Git, GitHub</p>
-                            </div>
-
-                            <!-- Category 4 -->
-                            <div class="skill-group">
-                                <h3><i class="fa-solid fa-chart-line"></i> Monitoring & Telemetry</h3>
-                                <p class="skill-list">Prometheus, Grafana, Elasticsearch, Logstash, Kibana (ELK), cAdvisor</p>
-                            </div>
-
-                            <!-- Category 5 -->
+                            <!-- Category 2: Networking -->
                             <div class="skill-group">
                                 <h3><i class="fa-solid fa-network-wired"></i> Networking</h3>
                                 <p class="skill-list">OSI, TCP/IP, Subnetting, Routing (RIP, OSPF, EIGRP), VLANs, NACLs, Wireshark</p>
                             </div>
 
-                            <!-- Category 6 -->
+                            <!-- Category 3: DevOps -->
+                            <div class="skill-group">
+                                <h3><i class="fa-solid fa-cubes"></i> DevOps & IaC</h3>
+                                <p class="skill-list">Jenkins, Docker, Docker Swarm, Kubernetes, Terraform, Ansible, Maven, Git, GitHub</p>
+                            </div>
+
+                            <!-- Category 4: Cybersecurity -->
+                            <div class="skill-group">
+                                <h3><i class="fa-solid fa-shield-cat"></i> Cybersecurity</h3>
+                                <p class="skill-list">OWASP Top 10, Web & Android Security, Vulnerability Assessment, Firewalls, Snort, Suricata, iptables, Fail2Ban, Proxy, OpenVPN</p>
+                            </div>
+
+                            <!-- Category 5: Monitoring -->
+                            <div class="skill-group">
+                                <h3><i class="fa-solid fa-chart-line"></i> Monitoring & Telemetry</h3>
+                                <p class="skill-list">Prometheus, Grafana, Elasticsearch, Logstash, Kibana (ELK), cAdvisor</p>
+                            </div>
+
+                            <!-- Category 6: Digital Forensics -->
                             <div class="skill-group">
                                 <h3><i class="fa-solid fa-fingerprint"></i> Digital Forensics</h3>
                                 <p class="skill-list">OSForensics, Autopsy, FTK Imager, Magnet AXIOM, Volatility, TestDisk, Memory & Network Forensics</p>
                             </div>
 
-                            <!-- Category 7 -->
-                            <div class="skill-group">
-                                <h3><i class="fa-solid fa-code"></i> Programming & Scripting</h3>
-                                <p class="skill-list">Python, C, Bash / Shell Scripting</p>
-                            </div>
-
-                            <!-- Category 8 -->
+                            <!-- Category 7: OS & Databases -->
                             <div class="skill-group">
                                 <h3><i class="fa-solid fa-database"></i> OS & Databases</h3>
                                 <p class="skill-list">Ubuntu, Debian, Rocky Linux, Windows Server, MySQL, Oracle</p>
+                            </div>
+
+                            <!-- Category 8: Programming -->
+                            <div class="skill-group">
+                                <h3><i class="fa-solid fa-code"></i> Programming & Scripting</h3>
+                                <p class="skill-list">Python, C, Bash / Shell Scripting</p>
                             </div>
                         </div>
                     </div>
