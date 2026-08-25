@@ -525,26 +525,34 @@ body:not(.CRT-on) .crt-overlay {
 
 .social-links {
     display: flex;
-    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
     width: 100%;
     margin-bottom: 20px;
 }
 
-.social-btn {
-    flex: 1;
-    padding: 8px;
+.social-icon-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
     border: 1px solid var(--border-color);
+    background: rgba(0, 0, 0, 0.4);
     color: var(--main-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.25rem;
     text-decoration: none;
-    text-align: center;
-    font-size: 0.85rem;
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
 }
 
-.social-btn:hover {
+.social-icon-btn:hover {
     background: var(--main-color);
     color: #000;
-    box-shadow: 0 0 10px var(--main-glow);
+    transform: translateY(-3px) scale(1.1);
+    box-shadow: 0 0 15px var(--main-glow);
 }
 
 .download-resume-wrap {
