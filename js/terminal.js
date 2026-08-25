@@ -441,6 +441,7 @@ Email     : <a href="mailto:patilrahulprafulla@gmail.com" style="color:var(--mai
 GitHub    : <a href="https://github.com/therahulpatil" target="_blank" style="color:var(--accent-cyan)">https://github.com/therahulpatil</a>
 LinkedIn  : <a href="https://www.linkedin.com/in/patilrahulprafulla" target="_blank" style="color:var(--accent-cyan)">https://www.linkedin.com/in/patilrahulprafulla</a>
 Instagram : <a href="https://www.instagram.com/the.rahul.patil" target="_blank" style="color:var(--accent-cyan)">https://www.instagram.com/the.rahul.patil</a>
+Facebook  : <a href="https://www.facebook.com/share/18JzNa2Qru/?mibextid=wwXIfr" target="_blank" style="color:var(--accent-cyan)">https://www.facebook.com/share/18JzNa2Qru/</a>
 Domain    : <a href="https://therahulpatil.in" target="_blank" style="color:var(--highlight)">https://therahulpatil.in</a>
 --------------------------------------------------------------------------------`;
     }
