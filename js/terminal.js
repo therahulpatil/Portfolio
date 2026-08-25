@@ -30,6 +30,8 @@ class CyberTerminal {
             'skills': () => this.cmdSkills(),
             'projects': () => this.cmdProjects(),
             'education': () => this.cmdEducation(),
+            'resume': () => this.cmdResume(),
+            'cat resume.txt': () => this.cmdResume(),
             'certs': () => this.cmdCertifications(),
             'certifications': () => this.cmdCertifications(),
             'contact': () => this.cmdContact(),
@@ -421,6 +423,17 @@ ACADEMIC QUALIFICATIONS (ls -l /var/log/education/):
 -rw-r--r-- 1 B.Tech-CSE   <span class="cmd-highlight">72.58%</span> Jun 2024 <span class="highlight">Tatyasaheb_Kore_Inst_of_Engg_&_Tech.edu</span>
 -rw-r--r-- 1 HSC-Class12  <span class="cmd-highlight">75.08%</span> Feb 2020 <span class="highlight">Yashwantrao_Chavan_Warana_Mahavidhyalaya.edu</span>
 -rw-r--r-- 1 SSC-Class10  <span class="cmd-highlight">85.60%</span> Mar 2018 <span class="highlight">Shree_Warana_Vidhyalaya.edu</span>`;
+    }
+
+    cmdResume() {
+        const link = document.createElement('a');
+        link.href = 'assets/RahulPatil.doc';
+        link.download = 'RahulPatil.doc';
+        link.click();
+
+        return `
+<span class="cmd-highlight">[DOWNLOADING RESUME]</span> Initiating transfer for: <span class="highlight">assets/RahulPatil.doc</span>
+Click here if download does not start automatically: <a href="assets/RahulPatil.doc" download="RahulPatil.doc" style="color:var(--accent-cyan);">RahulPatil.doc</a>`;
     }
 
     cmdCertifications() {
